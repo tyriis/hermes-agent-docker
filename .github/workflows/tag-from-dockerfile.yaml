@@ -13,11 +13,25 @@ jobs:
   tag:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # https://github.com/marketplace/actions/github-app-token
+      - name: Generate Token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          app-id: "${{ secrets.BOT_APP_ID }}"
+          private-key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
+
+      # https://github.com/marketplace/actions/checkout
+      - name: Checkout Repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: "${{ steps.app-token.outputs.token }}"
+
       - name: Extract tag from FROM line
         run: |
           TAG=$(sed -n 's/^FROM docker\.io\/nousresearch\/hermes-agent:\(v[^@]*\).*/\1/p' Dockerfile)
           echo "tag=$TAG" >> "$GITHUB_ENV"
+
       - name: Create tag
         if: env.tag != ''
         run: |
@@ -26,4 +40,4 @@ jobs:
             exit 0
           fi
           git tag "${{ env.tag }}"
-          git push origin "${{ env.tag }}"
+          git push "https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/${{ github.repository }}" "${{ env.tag }}"
