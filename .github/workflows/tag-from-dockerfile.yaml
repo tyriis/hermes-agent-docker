@@ -1,0 +1,29 @@
+---
+name: tag-from-dockerfile
+
+on:
+  push:
+    branches: [main]
+    paths: [Dockerfile]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Extract tag from FROM line
+        run: |
+          TAG=$(sed -n 's/^FROM docker\.io\/nousresearch\/hermes-agent:\(v[^@]*\).*/\1/p' Dockerfile)
+          echo "tag=$TAG" >> "$GITHUB_ENV"
+      - name: Create tag
+        if: env.tag != ''
+        run: |
+          if git rev-parse "refs/tags/${{ env.tag }}" >/dev/null 2>&1; then
+            echo "Tag ${{ env.tag }} already exists, skipping"
+            exit 0
+          fi
+          git tag "${{ env.tag }}"
+          git push origin "${{ env.tag }}"
