@@ -32,12 +32,10 @@ jobs:
           TAG=$(sed -n 's/^FROM docker\.io\/nousresearch\/hermes-agent:\(v[^@]*\).*/\1/p' Dockerfile)
           echo "tag=$TAG" >> "$GITHUB_ENV"
 
-      - name: Create tag
+      # https://github.com/marketplace/actions/github-tag
+      - name: GitHub Tag
         if: env.tag != ''
-        run: |
-          if git rev-parse "refs/tags/${{ env.tag }}" >/dev/null 2>&1; then
-            echo "Tag ${{ env.tag }} already exists, skipping"
-            exit 0
-          fi
-          git tag "${{ env.tag }}"
-          git push "https://x-access-token:${{ steps.generate-token.outputs.token }}@github.com/${{ github.repository }}" "${{ env.tag }}"
+        uses: mathieudutour/github-tag-action@fcf91673e8c282ae8bc6ce964d46ea81456f3f83 # v6.2
+        with:
+          github_token: ${{ steps.app-token.outputs.token }}
+          custom_tag: ${{ env.tag }}
