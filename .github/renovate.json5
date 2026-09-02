@@ -2,4 +2,15 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   enabled: true,
   extends: ["github>techtales-io/renovate-config:base.json5"],
+  packageRules: [
+    {
+      matchDatasources: ["docker"],
+      matchDepNames: [
+        "nousresearch/hermes-agent",
+        "docker.io/nousresearch/hermes-agent",
+      ],
+      automerge: true,
+      ignoreTests: true,
+    },
+  ],
 }
