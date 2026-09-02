@@ -1,4 +1,4 @@
-FROM docker.io/nousresearch/hermes-agent:v2026.8.18@sha256:22e37bb4ed1b0f50cb6bd991dca7ecacd6c9f29df9b4a20fc989d32bc763ccf6
+FROM docker.io/nousresearch/hermes-agent:v2026.8.31@sha256:64923faeae267792bf9bf87fe3b4c4869e35004e360c7df01730ad801b74d524
 
 # Pre-bake fal-client so lazy_deps.py's _is_satisfied("fal-client==0.13.1")
 # returns True at runtime, skipping the lazy-install (which would fail
