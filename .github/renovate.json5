@@ -12,5 +12,12 @@
       automerge: true,
       ignoreTests: true,
     },
+    {
+      matchManagers: ["github-actions"],
+      automerge: true,
+      matchUpdateTypes: ["minor", "patch", "digest"],
+      automergeType: "pr",
+      ignoreTests: true,
+    },
   ],
 }
